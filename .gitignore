@@ -1,0 +1,9 @@
+.env
+*.mdf
+*.ldf
+.DS_Store
+__pycache__/
+*.pyc
+extracted_data/
+load*.log
+.venv/
