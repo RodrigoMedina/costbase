@@ -14,10 +14,17 @@ const resend = process.env.RESEND_API_KEY
 const fromAddress =
   process.env.SMTP_FROM || "Auth Boilerplate <onboarding@resend.dev>";
 
-const appUrl =
-  process.env.AUTH_URL ||
-  process.env.NEXT_PUBLIC_APP_URL ||
-  (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "");
+function normalizeUrl(url: string | undefined, fallback: string) {
+  if (!url) return fallback;
+  return url.startsWith("http://") || url.startsWith("https://")
+    ? url
+    : `https://${url}`;
+}
+
+const appUrl = normalizeUrl(
+  process.env.AUTH_URL || process.env.NEXT_PUBLIC_APP_URL,
+  process.env.NODE_ENV === "development" ? "http://localhost:3000" : "",
+);
 
 async function sendAuthEmail(params: {
   to: string;
