@@ -22,7 +22,7 @@ function normalizeUrl(url: string | undefined, fallback: string) {
 }
 
 const appUrl = normalizeUrl(
-  process.env.AUTH_URL || process.env.NEXT_PUBLIC_APP_URL,
+  process.env.AUTH_URL || process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL,
   process.env.NODE_ENV === "development" ? "http://localhost:3000" : "",
 );
 
@@ -111,6 +111,7 @@ export function getAuth() {
   trustedOrigins: [
     process.env.NEXT_PUBLIC_APP_URL,
     process.env.AUTH_URL,
+    process.env.BETTER_AUTH_URL,
     "http://localhost:5173",
     "http://localhost:3000",
   ].filter(Boolean) as string[],
