@@ -46,6 +46,8 @@ export interface InsumoConPrecio extends InsumoRequerido {
   subtotal: number;
   fuente_precio: string;
   confianza: number;
+  unidad_db?: string | null;
+  conversion_aplicada?: string | null;
 }
 
 export interface ResultadoConPrecios extends ResultadoModulo {
