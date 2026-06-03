@@ -1,9 +1,10 @@
 import { FastifyInstance } from 'fastify';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { Pool } from 'pg';
 import type { Server as McpServerType } from '@modelcontextprotocol/sdk/server/index.js';
 import type { SSEServerTransport as SseTransportType } from '@modelcontextprotocol/sdk/server/sse.js';
 
-let currentApiToken: string | undefined;
+const tokenStorage = new AsyncLocalStorage<{ token: string }>();
 
 interface SessionEntry {
   transport: SseTransportType;
@@ -178,7 +179,7 @@ async function createMcpServer(app: FastifyInstance, _pool: Pool) {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
-    const token = currentApiToken;
+    const token = tokenStorage.getStore()?.token;
 
     try {
       let data: unknown;
@@ -274,11 +275,8 @@ export async function registerMcpRoutes(app: FastifyInstance, pool: Pool) {
     }
     const entry = sessions.get(sessionId)!;
     reply.hijack();
-    currentApiToken = entry.token;
-    try {
-      await entry.transport.handlePostMessage(req.raw, reply.raw);
-    } finally {
-      currentApiToken = undefined;
-    }
+    await tokenStorage.run({ token: entry.token }, () =>
+      entry.transport.handlePostMessage(req.raw, reply.raw)
+    );
   });
 }
