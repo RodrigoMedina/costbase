@@ -257,6 +257,7 @@ export async function registerMcpRoutes(app: FastifyInstance, pool: Pool) {
 
   app.get('/mcp/sse', async (req, reply) => {
     const { SSEServerTransport } = await import('@modelcontextprotocol/sdk/server/sse.js');
+    reply.hijack();
     const transport = new SSEServerTransport('/mcp/messages', reply.raw);
     const sessionId = transport.sessionId;
     const authHeader = req.headers.authorization || '';
@@ -272,6 +273,7 @@ export async function registerMcpRoutes(app: FastifyInstance, pool: Pool) {
       return reply.status(401).send({ error: 'Invalid or expired session' });
     }
     const entry = sessions.get(sessionId)!;
+    reply.hijack();
     currentApiToken = entry.token;
     try {
       await entry.transport.handlePostMessage(req.raw, reply.raw);
