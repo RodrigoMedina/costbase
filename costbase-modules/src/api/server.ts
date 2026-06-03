@@ -6,6 +6,7 @@ import { config } from 'dotenv';
 import { resolver } from '../resolver/resolver';
 import { ALL_MODULES } from '../modules/index';
 import { authMiddleware } from './auth';
+import { registerMcpRoutes } from './mcp-adapter';
 import { registerInsumoRoutes } from './routes/insumos';
 import { registerConceptoRoutes } from './routes/conceptos';
 import { registerPartidaRoutes } from './routes/partidas';
@@ -90,6 +91,8 @@ registerConceptoRoutes(app, pool);
 registerPartidaRoutes(app, pool);
 registerPrecioRoutes(app, pool);
 registerSearchRoutes(app, pool);
+
+registerMcpRoutes(app, pool);
 
 const port = parseInt(process.env.PORT || '3001', 10);
 app.listen({ port, host: '0.0.0.0' }).then(() => {

@@ -12,6 +12,12 @@ const tokenCache = new Map<string, { info: TokenInfo; expires: number }>();
 
 export async function authMiddleware(req: FastifyRequest, reply: FastifyReply) {
   if (req.url === '/') return;
+  if (req.url.startsWith('/mcp/messages')) return;
+
+  const q = req.query as Record<string, string>;
+  if (q.api_key) {
+    req.headers.authorization = `Bearer ${q.api_key}`;
+  }
 
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) {
