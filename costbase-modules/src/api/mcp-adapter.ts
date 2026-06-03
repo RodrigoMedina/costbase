@@ -276,7 +276,7 @@ export async function registerMcpRoutes(app: FastifyInstance, pool: Pool) {
     const entry = sessions.get(sessionId)!;
     reply.hijack();
     await tokenStorage.run({ token: entry.token }, () =>
-      entry.transport.handlePostMessage(req.raw, reply.raw)
+      entry.transport.handlePostMessage(req.raw, reply.raw, req.body)
     );
   });
 }
