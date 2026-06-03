@@ -1,24 +1,14 @@
-import type { NextRequest } from "next/server";
+import { getAuth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
 
-let handlerPromise: Promise<{ GET: Function; POST: Function }> | null = null;
+let handler: ReturnType<typeof toNextJsHandler> | null = null;
 
-async function getHandler() {
-  if (!handlerPromise) {
-    handlerPromise = Promise.all([
-      import("@/lib/auth"),
-      import("better-auth/next-js"),
-    ]).then(([{ getAuth }, { toNextJsHandler }]) =>
-      toNextJsHandler(getAuth()),
-    );
+function getHandler() {
+  if (!handler) {
+    handler = toNextJsHandler(getAuth());
   }
-  return handlerPromise;
+  return handler;
 }
 
-export async function GET(request: NextRequest) {
-  const h = await getHandler();
-  return h.GET(request);
-}
-export async function POST(request: NextRequest) {
-  const h = await getHandler();
-  return h.POST(request);
-}
+export const GET = (request: Request) => getHandler().GET(request);
+export const POST = (request: Request) => getHandler().POST(request);
