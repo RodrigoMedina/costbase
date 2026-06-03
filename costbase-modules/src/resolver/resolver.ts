@@ -3,32 +3,46 @@ import { ResultadoModulo, ResultadoConPrecios } from '../types/module.types';
 import INSUMO_METADATA, { getInsumoMeta } from './insumo-metadata';
 import { getConversionFactor } from './unit-conversion';
 
-function escapeSqlLiteral(value: string): string {
-  return value.replace(/'/g, "''");
-}
+const ALLOWED_EXACT_FIELDS = new Set(['clave_neodata']);
 
-function buildQuery(meta: ReturnType<typeof getInsumoMeta>): string | null {
+function buildQuery(
+  meta: ReturnType<typeof getInsumoMeta>
+): { where: string; params: unknown[] } | null {
   if (!meta) return null;
 
-  const conditions: string[] = [`tipo = '${escapeSqlLiteral(meta.tipo_db)}'`];
+  const conditions: string[] = [];
+  const params: unknown[] = [];
+  let idx = 1;
+
+  conditions.push(`tipo = $${idx++}`);
+  params.push(meta.tipo_db);
 
   if (meta.exact_field && meta.exact_value) {
-    conditions.push(`${meta.exact_field} = '${escapeSqlLiteral(meta.exact_value)}'`);
+    if (!ALLOWED_EXACT_FIELDS.has(meta.exact_field)) {
+      throw new Error(
+        `resolver.buildQuery: disallowed exact_field "${meta.exact_field}"`
+      );
+    }
+    conditions.push(`${meta.exact_field} = $${idx++}`);
+    params.push(meta.exact_value);
   }
 
   if (meta.keywords) {
     for (const kw of meta.keywords) {
-      conditions.push(`nombre ILIKE '%${escapeSqlLiteral(kw)}%'`);
+      conditions.push(`nombre ILIKE $${idx++}`);
+      params.push(`%${kw}%`);
     }
   }
 
   if (meta.exclude_keywords) {
     for (const kw of meta.exclude_keywords) {
-      conditions.push(`nombre NOT ILIKE '%${escapeSqlLiteral(kw)}%'`);
+      conditions.push(`nombre NOT ILIKE $${idx++}`);
+      params.push(`%${kw}%`);
     }
   }
 
-  return `WHERE ${conditions.join(' AND ')} ORDER BY LENGTH(nombre) ASC LIMIT 1`;
+  const where = `WHERE ${conditions.join(' AND ')} ORDER BY LENGTH(nombre) ASC LIMIT 1`;
+  return { where, params };
 }
 
 export async function resolver(
@@ -59,14 +73,15 @@ export async function resolver(
       continue;
     }
 
-    const query = buildQuery(meta);
-    if (!query) {
+    const built = buildQuery(meta);
+    if (!built) {
       console.warn(`RESOLVER: Could not build query for tipo="${insumo.tipo}"`);
       continue;
     }
 
     const insumo_row = await pool.query(
-      `SELECT i.id, i.nombre, i.tipo, i.unidad FROM insumos i ${query}`
+      `SELECT i.id, i.nombre, i.tipo, i.unidad FROM insumos i ${built.where}`,
+      built.params
     );
 
     if (insumo_row.rows.length === 0) {
