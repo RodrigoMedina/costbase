@@ -7,3 +7,7 @@ __pycache__/
 extracted_data/
 load*.log
 .venv/
+costbase-modules/node_modules/
+costbase-modules/mcp/node_modules/
+.opencode/
+intelimat_*.csv

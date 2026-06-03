@@ -1,0 +1,30 @@
+{
+  "name": "costbase-modules",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/api/server.js",
+    "dev": "ts-node src/api/server.ts",
+    "test": "jest",
+    "validate": "ts-node src/validation/validate-modules.ts",
+    "mcp:sse": "cd mcp && npx tsx src/server.ts --transport sse",
+    "mcp:stdio": "cd mcp && npx tsx src/server.ts --transport stdio"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "dotenv": "^16.4.0",
+    "fastify": "^4.26.0",
+    "jsonwebtoken": "^9.0.3",
+    "openai": "^6.41.0",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.4.0"
+  }
+}
