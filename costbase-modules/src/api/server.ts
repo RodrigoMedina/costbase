@@ -15,7 +15,7 @@ import { registerSearchRoutes } from './routes/search';
 config();
 
 const app = Fastify({ logger: true });
-const pool = new Pool({ connectionString: process.env.POSTGRES_DSN });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 app.register(cors, { origin: true });
 

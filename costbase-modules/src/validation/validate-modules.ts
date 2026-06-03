@@ -5,7 +5,7 @@ import { resolver } from '../resolver/resolver';
 
 config();
 
-const pool = new Pool({ connectionString: process.env.POSTGRES_DSN });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 function getDefaultParams(mod: { params: Record<string, { default: unknown }> }): Record<string, unknown> {
   const params: Record<string, unknown> = {};
