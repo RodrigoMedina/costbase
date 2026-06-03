@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey } from "@better-auth/api-key";
 import { Resend } from "resend";
 import type { ReactElement } from "react";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { VerificationEmail } from "@/emails/verification-email";
 import { ResetPasswordEmail } from "@/emails/reset-password-email";
 import { WelcomeEmail } from "@/emails/welcome-email";
@@ -89,7 +89,8 @@ async function sendWelcomeEmail(params: {
   });
 }
 
-export const auth = betterAuth({
+export function getAuth() {
+  return betterAuth({
   socialProviders: {
     google: {
       prompt: "select_account",
@@ -97,7 +98,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
-  database: drizzleAdapter(db, { provider: "pg" }),
+  database: drizzleAdapter(getDb(), { provider: "pg" }),
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: appUrl,
   trustedOrigins: [
@@ -152,4 +153,5 @@ export const auth = betterAuth({
       },
     }),
   ],
-});
+  });
+}
