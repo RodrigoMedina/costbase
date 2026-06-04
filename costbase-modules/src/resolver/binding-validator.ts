@@ -77,11 +77,32 @@ export function computePriceDivisor(
     module_unidad.toUpperCase() === 'ML' &&
     db_unidad.toUpperCase() === 'PZA'
   ) {
-    return 1 / binding.pieza_longitud_m;
+    return binding.pieza_longitud_m;
   }
   const mod = module_unidad.toUpperCase();
   const db = db_unidad.toUpperCase();
   if (mod === db) return 1;
   if (db === 'MIL' && mod === 'PZA') return 1000;
   return 1;
+}
+
+/**
+ * Packaged DB units (PZA, MIL) priced per piece/lot → smaller module units (ML, PZA)
+ * must lower unit price after division.
+ */
+export function isConversionDirectionSuspicious(
+  precio_db: number,
+  precio_convertido: number,
+  module_unidad: string,
+  db_unidad: string,
+  price_divisor: number
+): boolean {
+  if (precio_db <= 0 || price_divisor <= 1) return false;
+  const mod = module_unidad.toUpperCase();
+  const db = db_unidad.toUpperCase();
+  const packagedToSmaller =
+    (db === 'PZA' && (mod === 'ML' || mod === 'M')) ||
+    (db === 'MIL' && mod === 'PZA');
+  if (!packagedToSmaller) return false;
+  return precio_convertido > precio_db * 1.001;
 }

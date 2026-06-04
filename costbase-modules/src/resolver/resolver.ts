@@ -10,6 +10,7 @@ import { getTipoBinding } from './tipo-bindings.registry';
 import {
   validateBindingTarget,
   computePriceDivisor,
+  isConversionDirectionSuspicious,
 } from './binding-validator';
 
 const ALLOWED_EXACT_FIELDS = new Set(['clave_neodata']);
@@ -196,6 +197,26 @@ export async function resolver(
     }
 
     const precio_convertido = precio > 0 ? precio / priceDivisor : 0;
+
+    if (
+      precio > 0 &&
+      isConversionDirectionSuspicious(
+        precio,
+        precio_convertido,
+        insumo.unidad,
+        unidad_db,
+        priceDivisor
+      )
+    ) {
+      pushWarning(
+        warnings,
+        'conversion_inverted',
+        insumo.tipo,
+        `Unit price rose after ${unidad_db}→${insumo.unidad} conversion (÷${priceDivisor}); check divisor`
+      );
+      flags.push('conversion_inverted');
+    }
+
     const cantidad_total = insumo.cantidad * (1 + (insumo.desperdicio ?? 0));
     const subtotal = cantidad_total * precio_convertido;
 

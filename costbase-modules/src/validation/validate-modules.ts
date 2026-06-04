@@ -10,6 +10,7 @@ const BAD_FLAGS = new Set([
   'unmapped',
   'category_mismatch',
   'unit_unconverted',
+  'conversion_inverted',
   'no_price',
 ]);
 

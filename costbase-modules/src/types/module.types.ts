@@ -5,6 +5,7 @@ export type ResolverWarningCode =
   | 'not_found'
   | 'no_price'
   | 'unit_unconverted'
+  | 'conversion_inverted'
   | 'category_mismatch';
 
 export interface ResolverWarning {

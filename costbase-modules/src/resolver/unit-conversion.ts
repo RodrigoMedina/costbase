@@ -63,11 +63,10 @@ export function resolveUnitConversion(
   }
 
   if (mod === 'ML' && db === 'PZA' && meta.pieza_longitud_m && meta.pieza_longitud_m > 0) {
-    const factor = 1 / meta.pieza_longitud_m;
     return {
-      factor,
+      factor: meta.pieza_longitud_m,
       applied: true,
-      description: `ML → PZA (pieza ${meta.pieza_longitud_m} m)`,
+      description: `PZA → ML price (÷${meta.pieza_longitud_m} m/pza)`,
       warning: false,
     };
   }
