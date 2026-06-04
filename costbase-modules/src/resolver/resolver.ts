@@ -5,109 +5,69 @@ import {
   ResolverWarning,
   InsumoConPrecio,
 } from '../types/module.types';
-import INSUMO_METADATA, { getInsumoMeta, type InsumoMeta } from './insumo-metadata';
-import { resolveUnitConversion } from './unit-conversion';
+import { getInsumoMeta, type InsumoMeta } from './insumo-metadata';
+import { getTipoBinding } from './tipo-bindings.registry';
+import {
+  validateBindingTarget,
+  computePriceDivisor,
+} from './binding-validator';
 
 const ALLOWED_EXACT_FIELDS = new Set(['clave_neodata']);
 
-interface CandidateRow {
-  id: string;
-  nombre: string;
-  tipo: string;
-  unidad: string;
-  score: number;
-}
-
-function buildQuery(meta: InsumoMeta): { where: string; params: unknown[] } | null {
-  const conditions: string[] = [];
-  const params: unknown[] = [];
-  let idx = 1;
-
-  conditions.push(`tipo = $${idx++}`);
-  params.push(meta.tipo_db);
-
-  if (meta.exact_field && meta.exact_value) {
-    if (!ALLOWED_EXACT_FIELDS.has(meta.exact_field)) {
-      throw new Error(`resolver.buildQuery: disallowed exact_field "${meta.exact_field}"`);
-    }
-    conditions.push(`${meta.exact_field} = $${idx++}`);
-    params.push(meta.exact_value);
-  }
-
-  if (meta.keywords) {
-    for (const kw of meta.keywords) {
-      conditions.push(`nombre ILIKE $${idx++}`);
-      params.push(`%${kw}%`);
-    }
-  }
-
-  if (meta.exclude_keywords) {
-    for (const kw of meta.exclude_keywords) {
-      conditions.push(`nombre NOT ILIKE $${idx++}`);
-      params.push(`%${kw}%`);
-    }
-  }
-
-  const where = `WHERE ${conditions.join(' AND ')} AND activo = true`;
-  return { where, params };
-}
-
-function scoreCandidate(
-  row: { nombre: string; tipo: string; unidad: string },
-  meta: InsumoMeta,
-  module_unidad: string
-): number {
-  let score = 100;
-  const nombre = row.nombre.toUpperCase();
-  const modU = module_unidad.trim().toUpperCase();
-  const dbU = row.unidad.trim().toUpperCase();
-  const expU = meta.unidad_esperada.trim().toUpperCase();
-
-  if (meta.expected_tipo_db && row.tipo !== meta.expected_tipo_db) {
-    score -= 80;
-  } else if (row.tipo !== meta.tipo_db) {
-    score -= 40;
-  }
-
-  if (dbU === modU) score += 25;
-  else if (dbU === expU) score += 10;
-  else score -= 30;
-
-  score -= Math.min(nombre.length / 20, 25);
-
-  if (meta.prefer_keywords) {
-    for (const kw of meta.prefer_keywords) {
-      if (nombre.includes(kw.toUpperCase())) score += 15;
-    }
-  }
-
-  return score;
-}
-
-async function resolveInsumoRow(
+async function resolveByExactClave(
   pool: Pool,
-  meta: InsumoMeta,
-  module_unidad: string
-): Promise<CandidateRow | null> {
-  const built = buildQuery(meta);
-  if (!built) return null;
+  meta: InsumoMeta
+): Promise<{ id: string; nombre: string; tipo: string; unidad: string } | null> {
+  if (!meta.exact_field || !meta.exact_value || !ALLOWED_EXACT_FIELDS.has(meta.exact_field)) {
+    return null;
+  }
+  const res = await pool.query(
+    `SELECT id, nombre, tipo, unidad FROM insumos
+     WHERE ${meta.exact_field} = $1 AND activo = true LIMIT 1`,
+    [meta.exact_value]
+  );
+  return res.rows[0] ?? null;
+}
+
+async function resolveByBinding(
+  pool: Pool,
+  tipo: string,
+  module_unidad: string,
+  region_id: number
+): Promise<{
+  row: { id: string; nombre: string; tipo: string; unidad: string };
+  bindingUsed: boolean;
+  priceDivisor: number;
+  conversionNote: string | null;
+} | null> {
+  const binding = getTipoBinding(tipo, region_id);
+  if (!binding) return null;
 
   const res = await pool.query(
-    `SELECT i.id, i.nombre, i.tipo, i.unidad FROM insumos i ${built.where} LIMIT 25`,
-    built.params
+    `SELECT id, nombre, tipo, unidad FROM insumos WHERE id = $1 AND activo = true`,
+    [binding.insumo_id]
   );
-
   if (res.rows.length === 0) return null;
 
-  let best: CandidateRow | null = null;
-  for (const row of res.rows) {
-    const score = scoreCandidate(row, meta, module_unidad);
-    if (!best || score > best.score) {
-      best = { id: row.id, nombre: row.nombre, tipo: row.tipo, unidad: row.unidad, score };
-    }
+  const row = res.rows[0];
+  const validation = validateBindingTarget(binding, row, module_unidad);
+  if (!validation.ok) return null;
+
+  const divisor = computePriceDivisor(binding, module_unidad, row.unidad);
+  let conversionNote: string | null = null;
+  if (divisor !== 1) {
+    conversionNote = `binding: ${row.unidad} → ${module_unidad} (÷${divisor})`;
   }
 
-  return best && best.score >= 0 ? best : null;
+  return { row, bindingUsed: true, priceDivisor: divisor, conversionNote };
+}
+
+function unitsCompatible(moduleUnit: string, dbUnit: string): boolean {
+  const m = moduleUnit.toUpperCase();
+  const d = dbUnit.toUpperCase();
+  if (m === d) return true;
+  if ((m === 'ML' || m === 'M') && (d === 'ML' || d === 'M')) return true;
+  return false;
 }
 
 function pushWarning(warnings: ResolverWarning[], code: ResolverWarning['code'], tipo: string, message: string) {
@@ -144,7 +104,7 @@ export async function resolver(
     const meta = getInsumoMeta(insumo.tipo);
 
     if (!meta) {
-      pushWarning(warnings, 'unmapped', insumo.tipo, `No metadata registry entry for tipo "${insumo.tipo}"`);
+      pushWarning(warnings, 'unmapped', insumo.tipo, `No metadata for tipo "${insumo.tipo}"`);
       insumos_con_precio.push(
         emptyLine(insumo, {
           nombre_db: `[UNMAPPED] ${insumo.tipo}`,
@@ -155,10 +115,21 @@ export async function resolver(
       continue;
     }
 
-    const candidate = await resolveInsumoRow(pool, meta, insumo.unidad);
+    const bound = await resolveByBinding(pool, insumo.tipo, insumo.unidad, region_id);
+    const exact = bound ? null : await resolveByExactClave(pool, meta);
 
-    if (!candidate) {
-      pushWarning(warnings, 'not_found', insumo.tipo, `No DB insumo matched keywords for "${insumo.tipo}"`);
+    const resolved = bound?.row ?? exact;
+    const priceDivisor = bound?.priceDivisor ?? 1;
+    const conversionNote = bound?.conversionNote ?? null;
+    const flags: string[] = bound ? ['bound'] : exact ? ['exact_clave'] : [];
+
+    if (!resolved) {
+      pushWarning(
+        warnings,
+        'not_found',
+        insumo.tipo,
+        `No binding or exact clave for "${insumo.tipo}" (keyword fallback disabled)`
+      );
       insumos_con_precio.push(
         emptyLine(insumo, {
           nombre_db: `[NOT FOUND] ${insumo.tipo}`,
@@ -169,18 +140,20 @@ export async function resolver(
       continue;
     }
 
-    const { id: insumo_id, nombre: nombre_db, tipo: tipo_db, unidad: unidad_db } = candidate;
+    const { id: insumo_id, nombre: nombre_db, tipo: tipo_db, unidad: unidad_db } = resolved;
 
-    const flags: string[] = [];
     if (meta.expected_tipo_db && tipo_db !== meta.expected_tipo_db) {
-      const msg = `Resolved "${nombre_db}" has tipo ${tipo_db}, expected ${meta.expected_tipo_db}`;
-      pushWarning(warnings, 'category_mismatch', insumo.tipo, msg);
+      pushWarning(
+        warnings,
+        'category_mismatch',
+        insumo.tipo,
+        `"${nombre_db}" tipo ${tipo_db} ≠ expected ${meta.expected_tipo_db}`
+      );
       flags.push('category_mismatch');
     }
 
     let precio_row = await pool.query(
-      `SELECT precio, fuente_tipo, confianza
-       FROM precios_actuales
+      `SELECT precio, fuente_tipo, confianza FROM precios_actuales
        WHERE insumo_id = $1 AND region_id = $2`,
       [insumo_id, region_id]
     );
@@ -195,8 +168,7 @@ export async function resolver(
       confianza = parseFloat(precio_row.rows[0].confianza ?? 0);
     } else if (region_id !== 1) {
       precio_row = await pool.query(
-        `SELECT precio, fuente_tipo, confianza
-         FROM precios_actuales
+        `SELECT precio, fuente_tipo, confianza FROM precios_actuales
          WHERE insumo_id = $1 AND region_id = 1`,
         [insumo_id]
       );
@@ -209,22 +181,21 @@ export async function resolver(
     }
 
     if (precio <= 0) {
-      pushWarning(warnings, 'no_price', insumo.tipo, `No canonical price for insumo "${nombre_db}" in region ${region_id}`);
+      pushWarning(warnings, 'no_price', insumo.tipo, `No price for "${nombre_db}" region ${region_id}`);
       flags.push('no_price');
     }
 
-    const unitConv = resolveUnitConversion(insumo.unidad, meta, unidad_db);
-    if (unitConv.warning) {
+    if (!unitsCompatible(insumo.unidad, unidad_db) && priceDivisor === 1 && !conversionNote) {
       pushWarning(
         warnings,
         'unit_unconverted',
         insumo.tipo,
-        `Unit mismatch: module ${insumo.unidad}, metadata ${meta.unidad_esperada}, DB ${unidad_db} — no conversion applied`
+        `Unit mismatch module ${insumo.unidad} vs DB ${unidad_db} without conversion`
       );
       flags.push('unit_unconverted');
     }
 
-    const precio_convertido = precio > 0 ? precio / unitConv.factor : 0;
+    const precio_convertido = precio > 0 ? precio / priceDivisor : 0;
     const cantidad_total = insumo.cantidad * (1 + (insumo.desperdicio ?? 0));
     const subtotal = cantidad_total * precio_convertido;
 
@@ -235,10 +206,10 @@ export async function resolver(
       nombre_db,
       precio_unitario: precio_convertido,
       subtotal,
-      fuente_precio,
+      fuente_precio: bound ? 'tipo_binding' : fuente_precio,
       confianza,
       unidad_db,
-      conversion_aplicada: unitConv.description,
+      conversion_aplicada: conversionNote,
       flags: flags.length > 0 ? flags : undefined,
     });
 

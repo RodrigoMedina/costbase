@@ -1,0 +1,400 @@
+{
+  "concreto_fc150": {
+    "insumo_id": "972e7b6c-2d57-46e7-8b87-319775087aef",
+    "source": "auto_validated",
+    "notes": "CONCRETO PREMEZCLADO F'c=150 KG/CM2, CLASE 2"
+  },
+  "concreto_fc200": {
+    "insumo_id": "87ce4000-ae03-4fb9-8f9d-0442a2782c29",
+    "source": "auto_validated",
+    "notes": "CONCRETO PREMEZCLADO F'c=200 KG/CM2, CLASE 2"
+  },
+  "concreto_fc250": {
+    "insumo_id": "06536863-a7ce-4431-ae24-bd6e88e36410",
+    "source": "auto_validated",
+    "notes": "CONCRETO PREMEZCLADO F'c=250 KG/CM2, CLASE 1"
+  },
+  "concreto_fc300": {
+    "insumo_id": "04b4c1ca-d03f-403b-9844-068300606899",
+    "source": "auto_validated",
+    "notes": "CONCRETO PREMEZCLADO F'c=300 KG/CM2, CLASE 1"
+  },
+  "concreto_pobre": {
+    "insumo_id": "74cc69c8-4076-49fa-8807-12bbc0d7989c",
+    "source": "auto_validated",
+    "notes": "CONCRETO PREMEZCLADO F'c=100 KG/CM2, CLASE 2"
+  },
+  "acero_no3": {
+    "insumo_id": "1094af98-4951-484d-bfd3-f1a85432aae9",
+    "source": "auto_validated",
+    "notes": "VARILLA R-42 DEL No. 3, (3/8 Ø), KG,  0.557 KG/M"
+  },
+  "acero_no4": {
+    "insumo_id": "ca61f45f-27b5-4cf8-b353-9d1cd90b680e",
+    "source": "auto_validated",
+    "notes": "VARILLA R-42 DEL No. 4, (1/2 Ø), KG,  0.996 KG/M"
+  },
+  "acero_no5": {
+    "insumo_id": "4ef17bc5-ecfc-4ffa-842c-00bfd51acaef",
+    "source": "auto_validated",
+    "notes": "VARILLA R-42 DEL No. 5, (5/8 Ø), KG,  1.56 KG/M"
+  },
+  "acero_no6": {
+    "insumo_id": "377a7b74-0299-4c94-8a24-237bd7c48495",
+    "source": "auto_validated",
+    "notes": "VARILLA R-42 DEL No. 6, (3/4 Ø), KG,  2.25 KG/M"
+  },
+  "acero_no8": {
+    "insumo_id": "e01d03c3-1653-4f2c-89da-2d633ed0dd40",
+    "source": "auto_validated",
+    "notes": "VARILLA R-42 DEL No. 8, (1 Ø), KG,  3.975 KG/M"
+  },
+  "malla_electrosoldada_6x6_10_10": {
+    "insumo_id": "7d884871-1a9b-4d5b-9efd-ec247598545c",
+    "source": "auto_validated",
+    "notes": "MALLA ELECTROSOLDADA 6x6/10-10, M2 (2.50X40 M)"
+  },
+  "alambre_recocido": {
+    "insumo_id": "e0b00da5-28a1-4fbc-8084-f2453a3bc01a",
+    "source": "auto_validated",
+    "notes": "ALAMBRE RECOCIDO CAL. 16, (1.59 mm Ø), KG, 0.016 KG/M"
+  },
+  "cimbra_zapatas": {
+    "insumo_id": "a19cce28-2974-44a6-b739-085800d71107",
+    "source": "auto_validated",
+    "notes": "Cimbra en zapatas de cimentación, acabado común, incluye: suministro de todos lo"
+  },
+  "cimbra_losa": {
+    "insumo_id": "0538efa9-9fa0-4c33-9e48-af0d86288aed",
+    "source": "auto_validated",
+    "notes": "Cimbra en losas de cimentación, acabado común, incluye: materiales, acarreos, co"
+  },
+  "cimbra_columnas": {
+    "source": "human",
+    "insumo_id": "4a057c5f-dd93-458d-8bd9-2c88fdac1570",
+    "expected_familia": "cimbra"
+  },
+  "cimbra_castillos": {
+    "source": "human",
+    "insumo_id": "4a057c5f-dd93-458d-8bd9-2c88fdac1570",
+    "expected_familia": "cimbra",
+    "forbidden_nombre_contains": [
+      "CASTILLO DE"
+    ],
+    "notes": "Triplay losas M2 formwork only"
+  },
+  "cimbra_pilotes": {
+    "insumo_id": "c6885f9a-8676-4f4e-94ba-5616b8f3f517",
+    "source": "auto_validated",
+    "notes": "Cimbra en pilotes, acabado aparente, incluye: materiales, acarreos, cortes, habi"
+  },
+  "cimbra_muros": {
+    "insumo_id": "b1c94d9a-08b8-4376-9c39-4122f70b0add",
+    "source": "auto_validated",
+    "notes": "Cimbra en muros de cimentación, acabado común, incluye: materiales, acarreos, co"
+  },
+  "cimbra_trabes": {
+    "insumo_id": "14a7e9b9-e133-47eb-98d8-062a0f1364cf",
+    "source": "auto_validated",
+    "notes": "Dala de 30x30 cm. de concreto hecho en obra de F'c=150 kg/cm2, acabado común, ar"
+  },
+  "excavacion_manual": {
+    "insumo_id": "9bcdefde-39a9-4d88-83bf-ced9cb8edb39",
+    "source": "auto_validated",
+    "notes": "Excavación de cepa, por medios manuales de 0 a -2.00 m, en material tipo II,  zo"
+  },
+  "plantilla_concreto_pobre": {
+    "insumo_id": "b0372182-772a-41d8-b119-978bd79d338e",
+    "source": "auto_validated",
+    "notes": "Plantilla de 5 cm, de espesor de concreto hecho en obra de F'c=100 kg/cm2, inclu"
+  },
+  "relleno_compactado": {
+    "insumo_id": "5b7def3f-8e1b-43e8-8040-2cdfb84bfcda",
+    "source": "auto_validated",
+    "notes": "Relleno con material producto de la excavación compactado con pisón de mano en c"
+  },
+  "acarreo_material": {
+    "source": "human",
+    "insumo_id": "f70e1254-7ce9-4dee-93f3-03c9a355ec58",
+    "expected_familia": "basico_obra",
+    "forbidden_nombre_contains": [
+      "TIERRA",
+      "VEGETAL",
+      "JARDIN"
+    ],
+    "notes": "Acarreo camión material excavación M3"
+  },
+  "tabique_rojo_14cm": {
+    "source": "human",
+    "insumo_id": "cc6a382b-6216-4cc6-ae7c-bf2a976f4b02",
+    "price_divisor": 1000,
+    "expected_familia": "tabique",
+    "notes": "6x13x26 tabique; drop keyword 14"
+  },
+  "tabique_rojo_21cm": {
+    "insumo_id": "cc6a382b-6216-4cc6-ae7c-bf2a976f4b02",
+    "source": "auto_validated",
+    "notes": "TABIQUE ROJO RECOCIDO DE 6x13x26 CM.",
+    "price_divisor": 1000
+  },
+  "tabique_rojo_28cm": {
+    "insumo_id": "cc6a382b-6216-4cc6-ae7c-bf2a976f4b02",
+    "source": "auto_validated",
+    "notes": "TABIQUE ROJO RECOCIDO DE 6x13x26 CM.",
+    "price_divisor": 1000
+  },
+  "block_concreto_15cm": {
+    "insumo_id": "25d98cde-7af8-400d-8b40-5989149fce1c",
+    "source": "auto_validated",
+    "notes": "BLOCK (1/2) DE CONCRETO HUECO 15x20x20"
+  },
+  "mortero_1_4": {
+    "insumo_id": "d07d4fb9-5fd6-4c3d-813d-2d5a4dc55c56",
+    "source": "auto_validated",
+    "notes": "MORTERO CEMENTO ARENA 1:4"
+  },
+  "mortero_1_5": {
+    "insumo_id": "bb055548-8404-4f83-a9f8-955eb3becc6a",
+    "source": "auto_validated",
+    "notes": "MORTERO CEMENTO ARENA 1:5"
+  },
+  "yeso_blanco": {
+    "insumo_id": "a8c6af0d-7b64-43ea-aace-cc668c30a46c",
+    "source": "auto_validated",
+    "notes": "YESO AMARRADO, TONELADA",
+    "price_divisor": 1000
+  },
+  "mezcla_aplanado": {
+    "insumo_id": "64470f96-3a4d-4727-9e9b-2d9374a69b9a",
+    "source": "auto_validated",
+    "notes": "Aplanado acabado pulido sobre muros, con mezcla cemento arena en proporción de 1"
+  },
+  "perfil_ptr": {
+    "insumo_id": "8fcf1672-3c9e-4596-98cc-203470a4d4d7",
+    "source": "auto_validated",
+    "notes": "PTR DE 3 x 3 DE 4 MM. DE ESPESOR (8.7 KG/M)",
+    "price_divisor": 1000
+  },
+  "angulo_estructural": {
+    "insumo_id": "2c4b0540-e14e-49db-9434-033b935286cf",
+    "source": "auto_validated",
+    "notes": "CLAVO CON ANGULO AC 100"
+  },
+  "placa_acero": {
+    "source": "human",
+    "insumo_id": "cec97501-f238-4be6-9be2-b0f96635e6ec",
+    "expected_familia": "acero",
+    "notes": "3/8 plate KG"
+  },
+  "pintura_esmalte": {
+    "insumo_id": "6cd77904-978d-4b9b-8233-28505400e433",
+    "source": "auto_validated",
+    "notes": "PINTURA DE ESMALTE VELMAR 300"
+  },
+  "soldadura_electrodo": {
+    "insumo_id": "eb2418b4-9829-4255-99b3-5ae859fa1d43",
+    "source": "auto_validated",
+    "notes": "SOLDADURA ELECTRODO 6010 y 7018"
+  },
+  "perfil_aluminio_kg": {
+    "insumo_id": "dd4288ba-e739-4622-b7ef-bacbb1046233",
+    "source": "auto_validated",
+    "notes": "PERFIL DE ALUMINIO VALSA"
+  },
+  "hule_neopreno": {
+    "source": "human",
+    "insumo_id": "c9f289aa-2981-427e-974d-77690c1eb3ae",
+    "expected_familia": "general",
+    "notes": "Empaque neopreno 3/8 M2"
+  },
+  "tornilleria_aluminio": {
+    "source": "human",
+    "insumo_id": "2fe7b726-7934-4172-bb04-dbbd5c444b8a",
+    "price_divisor": 1000,
+    "notes": "Tornillo autorroscable MIL→PZA"
+  },
+  "sellador_silicon": {
+    "source": "human",
+    "insumo_id": "9baceda5-e716-4576-9d7f-f87d2577ee4a",
+    "notes": "Silicon cartucho"
+  },
+  "mampara_sanilock_m2": {
+    "insumo_id": "34ef170c-2b8d-4191-8b24-f37371f78483",
+    "source": "auto_validated",
+    "notes": "KIT PANEL LATERAL SANILOCK"
+  },
+  "tubo_redondo_acero": {
+    "source": "human",
+    "insumo_id": "e5a87a7f-f072-4b5c-9f38-142a5d9f6a20",
+    "expected_familia": "acero",
+    "forbidden_nombre_contains": [
+      "CADWELD",
+      "MOLDE"
+    ],
+    "notes": "PTR 1x1 proxy for tubo redondo KG"
+  },
+  "tubo_cuadrado_acero": {
+    "insumo_id": "cb929529-7d46-420e-b45c-1183200525ac",
+    "source": "auto_validated",
+    "notes": "TUBO CUADRADO DE 2\" X 1/16\" NEGRO DE 6.10 M",
+    "pieza_longitud_m": 6.1
+  },
+  "platina_acero": {
+    "source": "human",
+    "insumo_id": "0ac521cb-a630-4778-ba17-1fe577058455",
+    "expected_familia": "acero",
+    "forbidden_nombre_contains": [
+      "CADWELD"
+    ],
+    "notes": "Solera 1/8x2.5 proxy platina KG"
+  },
+  "tubo_cobre_12plg": {
+    "insumo_id": "1a1bac3d-540e-4ef3-a9f7-84a6db95e91e",
+    "source": "auto_validated",
+    "notes": "TUBO COBRE FLEX DE 13 MM Ø, 15.24 M NACOBRE"
+  },
+  "tubo_cobre_34plg": {
+    "source": "human",
+    "insumo_id": "8dd3b957-359c-461d-a7d0-a1c48a2f7dfd",
+    "pieza_longitud_m": 6.1,
+    "expected_familia": "cobre"
+  },
+  "tubo_pvc_34plg": {
+    "insumo_id": "8ecbdb7e-6aeb-458b-b76b-e6c563f7ff22",
+    "source": "auto_validated",
+    "notes": "TUBO PVC HIDRAULICO  25 MM RD-13.5"
+  },
+  "tubo_pvc_1plg": {
+    "insumo_id": "37c0ffc5-b619-41e7-8654-664fb7dbad13",
+    "source": "auto_validated",
+    "notes": "TUBO PVC HIDRAULICO  32 MM RD-26"
+  },
+  "cople_cobre": {
+    "source": "human",
+    "insumo_id": "56efaa5b-c507-4a9c-8085-7df97693cb9c",
+    "expected_familia": "cobre",
+    "notes": "3/4 cople URREA"
+  },
+  "cople_pvc_34": {
+    "insumo_id": "48fc2a97-aaf8-42f0-aba1-57055d5b5575",
+    "source": "auto_validated",
+    "notes": "COPLE CPVC C-80 CEM 25MM"
+  },
+  "valvula_globo": {
+    "insumo_id": "16b4963d-5857-4ccf-ac1c-e911e3a92988",
+    "source": "auto_validated",
+    "notes": "VALVULA CHECK BRIDADA 14''"
+  },
+  "tinaco_rotoplas": {
+    "insumo_id": "9644596f-d887-49a4-8ad3-b49b161212e6",
+    "source": "auto_validated",
+    "notes": "TINACO BICAPA 600L C/ACCS ROTOPLAS"
+  },
+  "cable_thw_calibre_12": {
+    "insumo_id": "19386a8d-fcc7-488c-a96a-0c4d58e5ca13",
+    "source": "auto_validated",
+    "notes": "CABLE THW   12 AWG IUSA"
+  },
+  "cable_thw_calibre_10": {
+    "insumo_id": "1bd7ff9f-f4e0-4bb2-b478-a7e0e34fa9d5",
+    "source": "auto_validated",
+    "notes": "CABLE THW   10 AWG IUSA"
+  },
+  "cable_thw_calibre_8": {
+    "insumo_id": "c6128442-9437-4228-9d86-3b6971dcb55b",
+    "source": "auto_validated",
+    "notes": "CABLE THW    8 AWG IUSA"
+  },
+  "conduit_emt_34plg": {
+    "insumo_id": "070e797f-dfd7-46ae-9800-0ec2414c9de2",
+    "source": "auto_validated",
+    "notes": "TUBO CONDUIT GALVANIZADO PARED DELGADA 25 MM OMEGA",
+    "pieza_longitud_m": 3
+  },
+  "conduit_pvc_34plg": {
+    "insumo_id": "3410ae7d-b741-426f-b736-aaaefefd9c46",
+    "source": "auto_validated",
+    "notes": "TUBO CONDUIT PVC LIGERO 25MM",
+    "pieza_longitud_m": 3
+  },
+  "caja_registro_elect": {
+    "insumo_id": "564ffb20-89ae-441a-9237-53b94d6f0c30",
+    "source": "auto_validated",
+    "notes": "CAJA CUADRADA PVC  25MM C/TAPA"
+  },
+  "condulet_elect": {
+    "insumo_id": "0ddf9c09-0e35-47d6-a647-d0d3c94f15bc",
+    "source": "auto_validated",
+    "notes": "CONDULET  LBH-80 DE 76 MM"
+  },
+  "cinta_aislante": {
+    "source": "human",
+    "insumo_id": "c2e399f0-641d-413f-8b29-5c96e2fe1d49",
+    "notes": "Cinta Scotch 23 (proxy)"
+  },
+  "1A1P": {
+    "insumo_id": "ed01330b-401c-4e93-b573-688646fe46ac",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  5  (1 ALBAÑIL+1 PEON)"
+  },
+  "1F1A": {
+    "insumo_id": "e0d493fe-806d-4c6b-94c4-4d232c2987d3",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  6 (1 FIERRERO + 1 AYUDANTE)"
+  },
+  "1H1A": {
+    "insumo_id": "3a621d60-b4b0-47de-b0d1-83253df80760",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  9 (1 HERRERO + AYUDANTE)"
+  },
+  "1S1E": {
+    "insumo_id": "66882756-e010-435e-b183-d001828e228b",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No 17 (1 SOLDADOR+1 AY.ESP.)"
+  },
+  "1C1A": {
+    "insumo_id": "2ba350ed-b538-42cb-8189-5c2d36df3ac2",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  7 (1 CARP. O.N. + AYUDANTE)"
+  },
+  "1P1E": {
+    "insumo_id": "37ceffd9-80af-4f3d-846e-fa9456412adc",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No 20 (1 PLOMERO+ 1 AY.ESP.)"
+  },
+  "1E1E": {
+    "insumo_id": "0d26f1b3-e018-4e11-be47-587bf7afa1da",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No 19 (1 ELECTRIC.+AY.ESP)"
+  },
+  "1CO1A": {
+    "insumo_id": "30cd5fda-5ddc-4df9-b5d7-2aa705315692",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No. 12 (1 COLOCADOR + 1 AY.)"
+  },
+  "1A1E": {
+    "insumo_id": "1e62ce15-4d13-4226-9245-8175ff72b619",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No 16 (1 ALUMINIERO + AY.ESP.)"
+  },
+  "1P": {
+    "insumo_id": "4a41f25f-1b00-42b0-8e06-1b7db72c1956",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  1 (1 PEON)"
+  },
+  "1A": {
+    "insumo_id": "2fef3471-6605-4cc6-b9c7-0f5d46861090",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  3  (1 AYUDANTE GENERAL)"
+  },
+  "1P1A": {
+    "insumo_id": "bfcd49d0-c5fc-4297-bdd8-9d2c56c6918f",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No  8 (1 PINTOR + AYUDANTE)"
+  },
+  "1Y1A": {
+    "insumo_id": "5f40a9a7-e5b0-40f4-b7c6-8804631b5c7d",
+    "source": "auto_validated",
+    "notes": "CUADRILLA No 10 (1 YESERO + AYUDANTE)"
+  }
+}

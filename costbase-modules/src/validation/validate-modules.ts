@@ -3,6 +3,15 @@ import { config } from 'dotenv';
 import { ALL_MODULES } from '../modules/index';
 import { resolver } from '../resolver/resolver';
 import { listRegisteredTipos } from '../resolver/insumo-metadata';
+import { TIPO_BINDINGS, listBoundTipos } from '../resolver/tipo-bindings.registry';
+
+const BAD_FLAGS = new Set([
+  'not_found',
+  'unmapped',
+  'category_mismatch',
+  'unit_unconverted',
+  'no_price',
+]);
 
 config();
 
@@ -67,7 +76,7 @@ async function validate(): Promise<ValidationResult[]> {
           !i.insumo_id ||
           i.fuente_precio === 'not_found' ||
           i.fuente_precio === 'unmapped' ||
-          (i.flags && i.flags.length > 0)
+          (i.flags?.some((f) => BAD_FLAGS.has(f)) ?? false)
       );
       res.n_unresolved = badLines.length;
 
@@ -176,6 +185,21 @@ function printResults(results: ValidationResult[]) {
   const failed = results.filter((r) => r.status === 'error').length;
   console.log(`  ✅ ${passed} passed | ⚠️ ${warned} warnings | ➖ ${no_ref} no reference | ❌ ${failed} errors`);
   console.log(`  Registered tipos in metadata: ${listRegisteredTipos().length}`);
+  console.log(`  Tipo bindings loaded: ${listBoundTipos().length}`);
+
+  const usedTipos = new Set<string>();
+  for (const mod of Object.values(ALL_MODULES)) {
+    const r = mod.calcular(getDefaultParams(mod));
+    for (const ins of r.insumos) usedTipos.add(ins.tipo);
+  }
+  const missing = [...usedTipos].filter((t) => !TIPO_BINDINGS[t]).sort();
+  const coverage = usedTipos.size
+    ? Math.round(((usedTipos.size - missing.length) / usedTipos.size) * 1000) / 10
+    : 0;
+  console.log(`  Module tipo coverage: ${coverage}% (${usedTipos.size - missing.length}/${usedTipos.size})`);
+  if (missing.length > 0) {
+    console.log(`  Unbound tipos in MVP modules: ${missing.join(', ')}`);
+  }
 }
 
 async function main() {

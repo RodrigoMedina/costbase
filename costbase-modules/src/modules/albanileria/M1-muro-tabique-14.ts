@@ -23,8 +23,10 @@ function castilloLinesPerM2(): InsumoRequerido[] {
   const k1 = K1.calcular(k1Defaults);
   const ml_castillo_por_m2 = 1 / CASTILLO_SPACING_M;
 
-  return k1.insumos
-    .filter((ins) => !ins.tipo.match(/^[0-9]/))
+  const k1CimbraM2 = k1.insumos.find((i) => i.tipo === T.CIMBRA_CASTILLOS)?.cantidad ?? 0;
+
+  const materialLines = k1.insumos
+    .filter((ins) => !ins.tipo.match(/^[0-9]/) && ins.tipo !== T.CIMBRA_CASTILLOS)
     .map((ins) => ({
       tipo: ins.tipo,
       cantidad: ins.cantidad * ml_castillo_por_m2,
@@ -32,6 +34,18 @@ function castilloLinesPerM2(): InsumoRequerido[] {
       desperdicio: ins.desperdicio,
       descripcion: `Castillo @${CASTILLO_SPACING_M}m`,
     }));
+
+  if (k1CimbraM2 > 0) {
+    materialLines.push({
+      tipo: T.CIMBRA_CASTILLOS,
+      cantidad: k1CimbraM2 * ml_castillo_por_m2,
+      unidad: 'M2',
+      desperdicio: 0.05,
+      descripcion: `Cimbra castillo @${CASTILLO_SPACING_M}m`,
+    });
+  }
+
+  return materialLines;
 }
 
 export const M1: ModuloDefinicion = {
