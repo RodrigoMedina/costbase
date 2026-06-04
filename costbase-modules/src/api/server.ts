@@ -39,10 +39,10 @@ app.get('/modules', async () => {
 
 app.post<{
   Params: { code: string };
-  Body: { params: Record<string, unknown>; region_id: number };
+  Body: { params: Record<string, unknown>; region_id: number; strict?: boolean };
 }>('/modules/:code/calcular', async (req, reply) => {
   const { code } = req.params;
-  const { params, region_id } = req.body;
+  const { params, region_id, strict } = req.body;
 
   const modulo = ALL_MODULES[code];
   if (!modulo) return reply.status(404).send({ error: `Module ${code} not found` });
@@ -50,16 +50,25 @@ app.post<{
   const resultado = modulo.calcular(params as never);
   const con_precios = await resolver(resultado, region_id, pool);
 
+  if (strict && con_precios.warnings.length > 0) {
+    return reply.status(422).send({
+      error: 'Calculation has resolver warnings',
+      warnings: con_precios.warnings,
+      partial: con_precios,
+    });
+  }
+
   return con_precios;
 });
 
 app.post<{
   Body: {
     region_id: number;
+    strict?: boolean;
     items: Array<{ code: string; params: Record<string, unknown>; cantidad: number }>;
   };
-}>('/presupuesto', async (req) => {
-  const { region_id, items } = req.body;
+}>('/presupuesto', async (req, reply) => {
+  const { region_id, items, strict } = req.body;
 
   const lineas = await Promise.all(items.map(async item => {
     const modulo = ALL_MODULES[item.code];
@@ -73,11 +82,25 @@ app.post<{
     };
   }));
 
-  const total = lineas
-    .filter(Boolean)
-    .reduce((acc, l) => acc + (l?.importe ?? 0), 0);
+  const resolved = lineas.filter(Boolean) as NonNullable<(typeof lineas)[number]>[];
+  const allWarnings = resolved.flatMap((l) => l.warnings);
 
-  return { region_id, lineas: lineas.filter(Boolean), total_costo_directo: total };
+  if (strict && allWarnings.length > 0) {
+    return reply.status(422).send({
+      error: 'Presupuesto has resolver warnings',
+      warnings: allWarnings,
+      lineas: resolved,
+    });
+  }
+
+  const total = resolved.reduce((acc, l) => acc + (l?.importe ?? 0), 0);
+
+  return {
+    region_id,
+    lineas: resolved,
+    total_costo_directo: total,
+    warnings: allWarnings,
+  };
 });
 
 app.get<{ Params: { code: string } }>('/modules/:code/schema', async (req, reply) => {

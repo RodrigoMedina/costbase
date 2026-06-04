@@ -50,7 +50,7 @@ export const K1: ModuloDefinicion = {
         { tipo: `concreto_fc${p.fc}`, cantidad: vol_concreto, unidad: 'M3', desperdicio: 0.03 },
         { tipo: T.ACERO_NO3, cantidad: kg_total, unidad: 'KG', desperdicio: 0.05 },
         { tipo: T.ALAMBRE_RECOCIDO, cantidad: kg_total * 0.02, unidad: 'KG' },
-        { tipo: T.CIMBRA_COLUMNAS, cantidad: m2_cimbra, unidad: 'M2', desperdicio: 0.05 },
+        { tipo: T.CIMBRA_CASTILLOS, cantidad: m2_cimbra, unidad: 'M2', desperdicio: 0.05 },
         { tipo: T.MO_ALBANIL_PEON, cantidad: 0.25, unidad: 'JOR' },
         { tipo: T.MO_FIERRERO, cantidad: 0.12, unidad: 'JOR' },
       ],

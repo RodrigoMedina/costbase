@@ -104,6 +104,7 @@ CREATE TABLE precios (
   fuente_tipo TEXT NOT NULL CHECK (fuente_tipo IN ('scraping','api_oficial','cotizacion','manual','neodata_seed')),
   confianza   DECIMAL(3, 2) CHECK (confianza >= 0 AND confianza <= 1),
   fecha       DATE NOT NULL,
+  canonical   BOOLEAN NOT NULL DEFAULT false,
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 
@@ -112,13 +113,16 @@ CREATE INDEX idx_precios_region    ON precios(region_id);
 CREATE INDEX idx_precios_tier      ON precios(tier);
 CREATE INDEX idx_precios_fecha     ON precios(fecha DESC);
 
--- Current price view (most recent per insumo/region/tier)
+CREATE UNIQUE INDEX idx_precios_canonical_unique
+  ON precios (insumo_id, region_id)
+  WHERE canonical = true;
+
+-- One current price per insumo per region (see migrations/001_canonical_prices.sql)
 CREATE VIEW precios_actuales AS
-  SELECT DISTINCT ON (insumo_id, COALESCE(tier, '_default'))
-    insumo_id, region_id, tier, precio, moneda,
+  SELECT insumo_id, region_id, tier, precio, moneda,
     fuente_tipo, confianza, fecha
   FROM precios
-  ORDER BY insumo_id, COALESCE(tier, '_default'), fecha DESC;
+  WHERE canonical = true;
 
 -- 7. Intelimats catalog (Phase 3)
 CREATE TABLE intelimats_catalog (

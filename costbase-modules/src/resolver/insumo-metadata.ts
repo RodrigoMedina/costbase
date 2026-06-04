@@ -1,15 +1,22 @@
 export interface InsumoMeta {
   tipo_db: 'material' | 'mano_obra' | 'maquinaria' | 'basico_obra' | 'subcontrato' | 'herramienta';
+  expected_tipo_db?: InsumoMeta['tipo_db'];
   keywords?: string[];
   exact_field?: string;
   exact_value?: string;
   exclude_keywords?: string[];
+  prefer_keywords?: string[];
   unidad_esperada: string;
   unidad_label?: string;
+  /** Length of one piece in meters (ML module qty -> PZA DB price) */
+  pieza_longitud_m?: number;
+  /** Width in meters for ML -> M2 (e.g. neoprene roll) */
+  pieza_ancho_m?: number;
+  kg_por_ml?: number;
+  kg_por_pza?: number;
 }
 
 const INSUMO_METADATA: Record<string, InsumoMeta> = {
-  // ── Concretos ──────────────────────────────────────
   concreto_fc150: {
     tipo_db: 'material',
     keywords: ['CONCRETO', 'PREMEZCLADO', '150'],
@@ -36,7 +43,6 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'M3',
   },
 
-  // ── Acero de refuerzo ──────────────────────────────
   acero_no3: {
     tipo_db: 'material',
     keywords: ['VARILLA', 'R-42', 'No. 3'],
@@ -74,21 +80,36 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'KG',
   },
 
-  // ── Cimbras (basico_obra) ──────────────────────────
   cimbra_zapatas: {
     tipo_db: 'basico_obra',
     keywords: ['CIMBRA', 'ZAPATA'],
+    exclude_keywords: ['PILOTE', 'PILA', 'COLUMNA'],
     unidad_esperada: 'M2',
   },
   cimbra_losa: {
     tipo_db: 'basico_obra',
     keywords: ['CIMBRA', 'LOSA'],
+    exclude_keywords: ['ZAPATA', 'PILOTE'],
     unidad_esperada: 'M2',
   },
   cimbra_columnas: {
     tipo_db: 'basico_obra',
-    keywords: ['CIMBRA'],
-    exclude_keywords: ['LOSA', 'ZAPATA', 'TRA', 'MURO'],
+    keywords: ['CIMBRA', 'COLUMNA'],
+    exclude_keywords: ['LOSA', 'ZAPATA', 'PILOTE', 'PILA', 'CASTILLO', 'ENTREPI'],
+    prefer_keywords: ['COLUMNA', 'RECTANG'],
+    unidad_esperada: 'M2',
+  },
+  cimbra_castillos: {
+    tipo_db: 'basico_obra',
+    keywords: ['CIMBRA', 'CASTILLO'],
+    exclude_keywords: ['LOSA', 'ZAPATA', 'PILOTE', 'PILA'],
+    unidad_esperada: 'M2',
+  },
+  cimbra_pilotes: {
+    tipo_db: 'basico_obra',
+    keywords: ['CIMBRA', 'PILOTE'],
+    exclude_keywords: ['LOSA', 'ZAPATA', 'CASTILLO'],
+    prefer_keywords: ['PILOTE', 'PILA'],
     unidad_esperada: 'M2',
   },
   cimbra_muros: {
@@ -102,16 +123,26 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'M2',
   },
 
-  // ── Excavacion y terracerias ───────────────────────
   excavacion_manual: {
     tipo_db: 'basico_obra',
     keywords: ['EXCAV', 'MANUAL'],
     unidad_esperada: 'M3',
   },
   excavacion_maquina: {
-    tipo_db: 'basico_obra',
-    keywords: ['EXCAV', 'MAQUIN'],
-    unidad_esperada: 'M3',
+    tipo_db: 'maquinaria',
+    expected_tipo_db: 'maquinaria',
+    keywords: ['PERFOR', 'PILOTE'],
+    exclude_keywords: ['TIERRA', 'VEGETAL', 'JARDIN', 'MANUAL'],
+    prefer_keywords: ['PERFOR', 'MAQUIN'],
+    unidad_esperada: 'ML',
+  },
+  excavacion_hincado_pilote: {
+    tipo_db: 'maquinaria',
+    expected_tipo_db: 'maquinaria',
+    keywords: ['HINCAD', 'PILOTE'],
+    exclude_keywords: ['TIERRA', 'MANUAL'],
+    prefer_keywords: ['HINCAD'],
+    unidad_esperada: 'ML',
   },
   plantilla_concreto_pobre: {
     tipo_db: 'basico_obra',
@@ -120,19 +151,21 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
   },
   relleno_compactado: {
     tipo_db: 'basico_obra',
-    keywords: ['RELLENO'],
+    keywords: ['RELLENO', 'COMPACT'],
+    exclude_keywords: ['TIERRA', 'VEGETAL'],
     unidad_esperada: 'M3',
   },
   acarreo_material: {
     tipo_db: 'basico_obra',
-    keywords: ['ACARREO'],
+    keywords: ['ACARREO', 'MATERIAL', 'ESCOMBRO'],
+    exclude_keywords: ['TIERRA', 'VEGETAL', 'JARDIN', 'ABONO'],
+    prefer_keywords: ['ESCOMBRO', 'MATERIAL'],
     unidad_esperada: 'M3',
   },
 
-  // ── Tabique y block ────────────────────────────────
   tabique_rojo_14cm: {
     tipo_db: 'material',
-    keywords: ['TABIQUE', 'ROJO', 'RECOCIDO'],
+    keywords: ['TABIQUE', 'ROJO', 'RECOCIDO', '14'],
     exclude_keywords: ['MURO', 'CASTILLO', 'DALA', 'DAL'],
     unidad_esperada: 'PZA',
   },
@@ -152,7 +185,6 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'PZA',
   },
 
-  // ── Morteros (basico_obra o material) ──────────────
   mortero_1_4: {
     tipo_db: 'basico_obra',
     keywords: ['MORTERO', 'CEMENTO', 'ARENA', '1:4'],
@@ -169,7 +201,6 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'M3',
   },
 
-  // ── Acabados ───────────────────────────────────────
   yeso_blanco: {
     tipo_db: 'material',
     keywords: ['YESO'],
@@ -181,7 +212,6 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'M2',
   },
 
-  // ── Acero estructural ──────────────────────────────
   perfil_ipr: {
     tipo_db: 'material',
     keywords: ['PERFIL', 'IPR'],
@@ -200,6 +230,7 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
   placa_acero: {
     tipo_db: 'material',
     keywords: ['PLACA', 'ACERO'],
+    exclude_keywords: ['CADWELD', 'MOLDE'],
     unidad_esperada: 'KG',
   },
   pintura_anticorrosiva: {
@@ -214,39 +245,50 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
   },
   soldadura_electrodo: {
     tipo_db: 'material',
-    keywords: ['SOLDADURA'],
+    keywords: ['SOLDADURA', 'ELECTRODO'],
     unidad_esperada: 'KG',
   },
 
-  // ── Aluminio y vidrio ──────────────────────────────
   perfil_aluminio_kg: {
     tipo_db: 'material',
-    keywords: ['ALUMINIO'],
+    keywords: ['PERFIL', 'ALUMINIO'],
+    exclude_keywords: ['VIDRIO'],
     unidad_esperada: 'KG',
+  },
+  vidrio_4mm: {
+    tipo_db: 'material',
+    keywords: ['VIDRIO', '4'],
+    exclude_keywords: ['LAMINADO', 'TINTEX'],
+    prefer_keywords: ['CLARO', '4MM', '4 MM'],
+    unidad_esperada: 'M2',
   },
   vidrio_6mm: {
     tipo_db: 'material',
-    keywords: ['VIDRIO', 'CLARO'],
+    keywords: ['VIDRIO', '6'],
+    exclude_keywords: ['LAMINADO', 'TINTEX'],
+    prefer_keywords: ['CLARO', '6MM', '6 MM'],
     unidad_esperada: 'M2',
   },
   vidrio_laminado: {
     tipo_db: 'material',
-    keywords: ['VIDRIO'],
+    keywords: ['VIDRIO', 'LAMINADO'],
     unidad_esperada: 'M2',
   },
   hule_neopreno: {
     tipo_db: 'material',
-    keywords: ['NEOPRENO'],
+    keywords: ['NEOPRENO', 'HULE'],
+    exclude_keywords: ['M2', 'ROLLO'],
     unidad_esperada: 'ML',
+    pieza_ancho_m: 0.01,
   },
   tornilleria_aluminio: {
     tipo_db: 'material',
-    keywords: ['TORNILLO'],
+    keywords: ['TORNILLO', 'ALUMINIO'],
     unidad_esperada: 'PZA',
   },
   sellador_silicon: {
     tipo_db: 'material',
-    keywords: ['SILICON'],
+    keywords: ['SILICON', 'SELLADOR'],
     unidad_esperada: 'PZA',
   },
   mampara_sanilock_m2: {
@@ -255,49 +297,67 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'M2',
   },
 
-  // ── Tuberia acero ──────────────────────────────────
   tubo_redondo_acero: {
     tipo_db: 'material',
-    keywords: ['TUBO', 'ACERO'],
-    unidad_esperada: 'ML',
+    expected_tipo_db: 'material',
+    keywords: ['TUBO', 'REDONDO', 'ACERO'],
+    exclude_keywords: ['CADWELD', 'MOLDE', 'CALIBR', 'ALAMBRE', 'COBRE', 'PVC'],
+    prefer_keywords: ['ESTRUCT', 'NEGRO', 'PTR', 'REDONDO'],
+    unidad_esperada: 'KG',
+    kg_por_ml: 2.0,
   },
   tubo_cuadrado_acero: {
     tipo_db: 'material',
     keywords: ['TUBO', 'CUADRADO'],
-    unidad_esperada: 'ML',
+    exclude_keywords: ['CADWELD', 'PVC'],
+    unidad_esperada: 'KG',
   },
   platina_acero: {
     tipo_db: 'material',
-    keywords: ['PLATINA'],
-    unidad_esperada: 'ML',
+    keywords: ['PLATINA', 'ACERO'],
+    exclude_keywords: ['CADWELD'],
+    unidad_esperada: 'KG',
   },
 
-  // ── Tuberia cobre y PVC ────────────────────────────
   tubo_cobre_12plg: {
     tipo_db: 'material',
     keywords: ['TUBO', 'COBRE', '13'],
+    exclude_keywords: ['COPLE', 'CODO'],
     unidad_esperada: 'ML',
+    pieza_longitud_m: 6.1,
   },
   tubo_cobre_34plg: {
     tipo_db: 'material',
     keywords: ['TUBO', 'COBRE', '19'],
+    exclude_keywords: ['COPLE', 'CODO', '50', 'MM'],
+    prefer_keywords: ['3/4', '19 MM', '19MM'],
     unidad_esperada: 'ML',
+    pieza_longitud_m: 6.1,
   },
   tubo_pvc_34plg: {
     tipo_db: 'material',
     keywords: ['TUBO', 'PVC', '25'],
-    exclude_keywords: ['CONDUIT'],
+    exclude_keywords: ['CONDUIT', 'COBRE'],
     unidad_esperada: 'ML',
+    pieza_longitud_m: 6.0,
   },
   tubo_pvc_1plg: {
     tipo_db: 'material',
     keywords: ['TUBO', 'PVC', '32'],
-    exclude_keywords: ['CONDUIT'],
+    exclude_keywords: ['CONDUIT', 'COBRE'],
     unidad_esperada: 'ML',
+    pieza_longitud_m: 6.0,
   },
   cople_cobre: {
     tipo_db: 'material',
     keywords: ['COPLE', 'COBRE'],
+    exclude_keywords: ['50', 'MM', 'TRANSIC'],
+    prefer_keywords: ['3/4', '19'],
+    unidad_esperada: 'PZA',
+  },
+  cople_pvc_34: {
+    tipo_db: 'material',
+    keywords: ['COPLE', 'PVC', '25'],
     unidad_esperada: 'PZA',
   },
   valvula_globo: {
@@ -311,7 +371,6 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
     unidad_esperada: 'PZA',
   },
 
-  // ── Electricos ─────────────────────────────────────
   cable_thw_calibre_12: {
     tipo_db: 'material',
     keywords: ['CABLE', 'THW', '12'],
@@ -330,12 +389,15 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
   conduit_emt_34plg: {
     tipo_db: 'material',
     keywords: ['CONDUIT', 'GALVANIZADO', '25'],
+    exclude_keywords: ['PVC'],
     unidad_esperada: 'ML',
+    pieza_longitud_m: 3.0,
   },
   conduit_pvc_34plg: {
     tipo_db: 'material',
     keywords: ['CONDUIT', 'PVC', '25'],
     unidad_esperada: 'ML',
+    pieza_longitud_m: 3.0,
   },
   caja_registro_elect: {
     tipo_db: 'material',
@@ -349,11 +411,10 @@ const INSUMO_METADATA: Record<string, InsumoMeta> = {
   },
   cinta_aislante: {
     tipo_db: 'material',
-    keywords: ['CINTA'],
+    keywords: ['CINTA', 'AISLANTE'],
     unidad_esperada: 'PZA',
   },
 
-  // ── Mano de obra (busqueda exacta por clave) ──────
   '1A1P': { tipo_db: 'mano_obra', exact_field: 'clave_neodata', exact_value: '1A1P', unidad_esperada: 'JOR' },
   '1F1A': { tipo_db: 'mano_obra', exact_field: 'clave_neodata', exact_value: '1F1A', unidad_esperada: 'JOR' },
   '1H1A': { tipo_db: 'mano_obra', exact_field: 'clave_neodata', exact_value: '1H1A', unidad_esperada: 'JOR' },
@@ -373,4 +434,8 @@ export default INSUMO_METADATA;
 
 export function getInsumoMeta(tipo: string): InsumoMeta | undefined {
   return INSUMO_METADATA[tipo];
+}
+
+export function listRegisteredTipos(): string[] {
+  return Object.keys(INSUMO_METADATA);
 }

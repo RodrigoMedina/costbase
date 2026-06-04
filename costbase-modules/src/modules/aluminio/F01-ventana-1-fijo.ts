@@ -27,7 +27,9 @@ export const F01: ModuloDefinicion = {
     const kg_aluminio = perim_frame * 2.5;
     const area_vidrio = p.ancho_m * p.alto_m * 0.95;
 
-    const vidrio_tipo = p.tipo_vidrio === 'claro_6mm' ? T.VIDRIO_LAMINADO : T.VIDRIO_6MM;
+    const vidrio_tipo = p.tipo_vidrio === 'claro_6mm' ? T.VIDRIO_6MM : T.VIDRIO_4MM;
+    const neopreno_ancho_m = 0.01;
+    const area_neopreno = perim_frame * neopreno_ancho_m;
 
     return {
       module_code: 'F01',
@@ -38,7 +40,7 @@ export const F01: ModuloDefinicion = {
       insumos: [
         { tipo: T.PERFIL_ALUMINIO, cantidad: kg_aluminio, unidad: 'KG', desperdicio: 0.05 },
         { tipo: vidrio_tipo, cantidad: area_vidrio, unidad: 'M2', desperdicio: 0.03 },
-        { tipo: T.HULE_NEOPRENO, cantidad: perim_frame, unidad: 'ML', desperdicio: 0.05 },
+        { tipo: T.HULE_NEOPRENO, cantidad: area_neopreno, unidad: 'M2', desperdicio: 0.05, descripcion: 'Junta perimetral' },
         { tipo: T.TORNILLERIA_ALUMINIO, cantidad: perim_frame * 0.3, unidad: 'PZA' },
         { tipo: T.SELLADOR_SILICON, cantidad: perim_frame * 0.05, unidad: 'PZA' },
         { tipo: T.MO_ALUMINIERO, cantidad: 0.08, unidad: 'JOR' },

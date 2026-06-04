@@ -22,10 +22,13 @@ export const INSUMO_TIPOS = {
   CIMBRA_COLUMNAS: 'cimbra_columnas',
   CIMBRA_TRABES: 'cimbra_trabes',
   CIMBRA_LOSA: 'cimbra_losa',
+  CIMBRA_CASTILLOS: 'cimbra_castillos',
+  CIMBRA_PILOTES: 'cimbra_pilotes',
   CIMBRA_ESCALERAS: 'cimbra_escaleras',
 
   EXCAVACION_MANUAL: 'excavacion_manual',
   EXCAVACION_MAQUINA: 'excavacion_maquina',
+  EXCAVACION_HINCADO_PILOTE: 'excavacion_hincado_pilote',
   PLANTILLA: 'plantilla_concreto_pobre',
   RELLENO_COMPACTADO: 'relleno_compactado',
   ACARREO: 'acarreo_material',
@@ -50,6 +53,7 @@ export const INSUMO_TIPOS = {
   PINTURA_ESMALTE: 'pintura_esmalte',
 
   PERFIL_ALUMINIO: 'perfil_aluminio_kg',
+  VIDRIO_4MM: 'vidrio_4mm',
   VIDRIO_6MM: 'vidrio_6mm',
   VIDRIO_LAMINADO: 'vidrio_laminado',
   HULE_NEOPRENO: 'hule_neopreno',
@@ -67,6 +71,7 @@ export const INSUMO_TIPOS = {
   TUBO_PVC_34: 'tubo_pvc_34plg',
   TUBO_PVC_1: 'tubo_pvc_1plg',
   COPLE_COBRE: 'cople_cobre',
+  COPLE_PVC_34: 'cople_pvc_34',
   VALVULA_GLOBO: 'valvula_globo',
   TINACO: 'tinaco_rotoplas',
 

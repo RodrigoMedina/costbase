@@ -1,5 +1,18 @@
 export type InsumoTipo = string;
 
+export type ResolverWarningCode =
+  | 'unmapped'
+  | 'not_found'
+  | 'no_price'
+  | 'unit_unconverted'
+  | 'category_mismatch';
+
+export interface ResolverWarning {
+  code: ResolverWarningCode;
+  insumo_tipo: string;
+  message: string;
+}
+
 export interface ParametroDefinicion {
   label: string;
   tipo: 'number' | 'select' | 'boolean';
@@ -48,6 +61,7 @@ export interface InsumoConPrecio extends InsumoRequerido {
   confianza: number;
   unidad_db?: string | null;
   conversion_aplicada?: string | null;
+  flags?: string[];
 }
 
 export interface ResultadoConPrecios extends ResultadoModulo {
@@ -59,6 +73,7 @@ export interface ResultadoConPrecios extends ResultadoModulo {
     maquinaria: number;
     costo_directo: number;
   };
+  warnings: ResolverWarning[];
   validation?: {
     concepto_ref_clave?: string;
     concepto_ref_nombre?: string;

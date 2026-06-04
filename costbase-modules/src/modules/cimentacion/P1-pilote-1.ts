@@ -34,16 +34,16 @@ export const P1: ModuloDefinicion = {
     const p = raw as unknown as P1Params;
     const area_sec = p.lado_m * p.lado_m;
     const perim_sec = 4 * p.lado_m;
-    const vol_concreto = area_sec * p.profundidad_m;
+    const vol_concreto = area_sec;
 
-    const kg_long = p.n_varillas * PESO_VARILLA[p.diam_long] * p.profundidad_m * 1.10;
+    const kg_long = p.n_varillas * PESO_VARILLA[p.diam_long] * 1.10;
 
     const perim = perimEstribo(p.lado_m * 100, p.lado_m * 100, 5);
-    const n_estr_total = nEstribos(p.sep_estribos_cm) * (p.profundidad_m / 1.0);
+    const n_estr_total = nEstribos(p.sep_estribos_cm);
     const kg_estribos = PESO_VARILLA[p.diam_estribo] * perim * n_estr_total;
 
-    const perf_hincado = 42;
-    const perf_perforacion = 1;
+    const perf_perforacion_ml = 1;
+    const perf_hincado_ml = 1;
     const placas_conexion = p.n_secciones * 2 * 10;
 
     return {
@@ -53,13 +53,23 @@ export const P1: ModuloDefinicion = {
       params_used: { ...p },
       unidad_modulo: 'ML',
       insumos: [
-        { tipo: T.EXCAVACION_MAQUINA, cantidad: perf_perforacion, unidad: 'ML', descripcion: 'Perforación previa' },
-        { tipo: T.CIMBRA_COLUMNAS, cantidad: perim_sec * p.profundidad_m, unidad: 'M2', desperdicio: 0.05 },
+        {
+          tipo: T.EXCAVACION_MAQUINA,
+          cantidad: perf_perforacion_ml,
+          unidad: 'ML',
+          descripcion: 'Perforación (rendimiento por ML de pilote)',
+        },
+        { tipo: T.CIMBRA_PILOTES, cantidad: perim_sec, unidad: 'M2', desperdicio: 0.05 },
         { tipo: `concreto_fc${p.fc}`, cantidad: vol_concreto, unidad: 'M3', desperdicio: 0.05 },
         { tipo: T.ACERO_NO8, cantidad: kg_long + kg_estribos, unidad: 'KG', desperdicio: 0.05 },
         { tipo: T.ALAMBRE_RECOCIDO, cantidad: (kg_long + kg_estribos) * 0.02, unidad: 'KG' },
-        { tipo: T.PLACA_ACERO, cantidad: placas_conexion, unidad: 'KG', descripcion: 'Placas de empate entre secciones' },
-        { tipo: T.EXCAVACION_MAQUINA, cantidad: perf_hincado, unidad: 'ML', descripcion: 'Hincado de pilote' },
+        { tipo: T.PLACA_ACERO, cantidad: placas_conexion / p.profundidad_m, unidad: 'KG', descripcion: 'Placas de empate entre secciones (por ML)' },
+        {
+          tipo: T.EXCAVACION_HINCADO_PILOTE,
+          cantidad: perf_hincado_ml,
+          unidad: 'ML',
+          descripcion: 'Hincado (rendimiento por ML de pilote)',
+        },
         { tipo: T.MO_FIERRERO, cantidad: 0.25, unidad: 'JOR' },
         { tipo: T.MO_ALBANIL_PEON, cantidad: 0.35, unidad: 'JOR' },
       ],

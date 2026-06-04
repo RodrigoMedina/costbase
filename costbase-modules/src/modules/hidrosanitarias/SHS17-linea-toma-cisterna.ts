@@ -28,6 +28,8 @@ export const SHS17: ModuloDefinicion = {
       ? (p.diametro === '1/2' ? T.TUBO_COBRE_12 : T.TUBO_COBRE_34)
       : (p.diametro === '3/4' ? T.TUBO_PVC_34 : T.TUBO_PVC_1);
 
+    const cople_tipo = p.material === 'cobre' ? T.COPLE_COBRE : T.COPLE_PVC_34;
+
     return {
       module_code: 'SHS17',
       module_name: 'LINEA DE TOMA A CISTERNA',
@@ -36,7 +38,7 @@ export const SHS17: ModuloDefinicion = {
       unidad_modulo: 'ML',
       insumos: [
         { tipo: tubo_tipo, cantidad: metro_tubo, unidad: 'ML' },
-        { tipo: T.COPLE_COBRE, cantidad: fittings, unidad: 'PZA' },
+        { tipo: cople_tipo, cantidad: fittings, unidad: 'PZA' },
         { tipo: T.MO_PLOMERO, cantidad: 0.05, unidad: 'JOR' },
       ],
       fuentes_norma: ['NOM-001-CONAGUA §5', 'IAPMO UPC'],
